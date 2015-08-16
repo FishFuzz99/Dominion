@@ -25,10 +25,19 @@ import java.util.ArrayList;
  */
 public class CardPanel extends JPanel
 {
-    CardPanel(DominionCard card)
-    {
-        // using the cards id or something, make a frame for it
-    }
+
+   //CardPanel(DominionCard card)
+   //{
+   //    ImageIcon image = new ImageIcon();
+   //    JLabel label = new JLabel();
+   //    JPanel theCard = new JPanel();
+
+   //    image = new ImageIcon(path + card.getName());
+   //    label = new JLabel(image);
+   //    theCard.add(label);
+   //    // using the cards id or something, make a frame for it
+   //}
+
 
 
 

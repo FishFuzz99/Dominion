@@ -218,20 +218,38 @@ import java.util.List;
 
     void setHandPane(List<DominionCard> hand)
     {
-        handPane = new JScrollPane();
+        handPane.removeAll();
         for(int i = 0; i < hand.size(); i++)
         {
-            CardPanel card = new CardPanel(hand.get(i));
+            String path = "C:\\Users\\Andrew\\Documents\\cs3230_final_client\\";
+            ImageIcon image = new ImageIcon();
+            JLabel label = new JLabel();
+            JPanel card = new JPanel();
+
+            image = new ImageIcon(path + hand.get(i).getName());
+            label = new JLabel(image);
+            card.add(label);
+
             handPane.add(card);
         }
     }
 
     void setPlayPane(List<DominionCard> hand)
     {
-        playPane = new JScrollPane();
+
+        playPane.removeAll();
         for(int i = 0; i < hand.size(); i++)
         {
-            CardPanel card = new CardPanel(hand.get(i));
+
+            String path = "C:\\Users\\Andrew\\Documents\\cs3230_final_client\\";
+            ImageIcon image = new ImageIcon();
+            JLabel label = new JLabel();
+            JPanel card = new JPanel();
+
+            image = new ImageIcon(path + hand.get(i).getName());
+            label = new JLabel(image);
+            card.add(label);
+
             playPane.add(card);
         }
     }
