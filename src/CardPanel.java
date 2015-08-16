@@ -35,10 +35,11 @@ public class CardPanel extends JPanel
    //    // using the cards id or something, make a frame for it
    //}
 
+    String source;
     DominionFrame frame;
     DominionCard card;
 
-    CardPanel(DominionCard card, DominionFrame frame)
+    CardPanel(DominionCard card, DominionFrame frame, String source)
     {
         this.card = card;
         String path = "C:\\Users\\Andrew\\Documents\\cs3230_final_client\\";
@@ -46,6 +47,7 @@ public class CardPanel extends JPanel
         JLabel label = new JLabel();
         JPanel cardPanel = new JPanel();
         this.frame = frame;
+        this.source = source;
 
         image = new ImageIcon(path + card.getName());
         label = new JLabel(image);
@@ -57,7 +59,7 @@ public class CardPanel extends JPanel
         if (e.getClickCount() >= 2)
         {
             // depending on phase, do stuff
-            frame.doCardEvents(card);
+            frame.doCardEvents(card, source);
         }
     }
 

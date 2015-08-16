@@ -1,5 +1,6 @@
 import game_server.game.blackjack.CardMessage;
 import game_server.game.dominion.DominionCard;
+import game_server.game.dominion.DominionPlayer;
 import game_server.game.dominion.GameState;
 import game_server.game.dominion.Turn;
 import game_server.message.ChatMessage;
@@ -223,7 +224,7 @@ import java.util.List;
         for(int i = 0; i < hand.size(); i++)
         {
             // add all teh cards in the hand to the pane
-            handPane.add(new CardPanel(hand.get(i), this));
+            handPane.add(new CardPanel(hand.get(i), this, "hand"));
         }
     }
 
@@ -234,7 +235,7 @@ import java.util.List;
         for(int i = 0; i < playedCards.size(); i++)
         {
             // add all of the cards to the pane
-            playPane.add(new CardPanel(playedCards.get(i), this));
+            playPane.add(new CardPanel(playedCards.get(i), this, "play"));
         }
     }
 
@@ -252,10 +253,37 @@ import java.util.List;
         displayGameState();
     }
 
-    public void doCardEvents(DominionCard card)
+    public void doCardEvents(DominionCard card, String source)
     {
         game_server.game.dominion.CardMessage.CardAction action;
-        
+        if (source.equals("hand"))
+        {
+            action = game_server.game.dominion.CardMessage.CardAction.PLAY;
+            if (card.getCardType().equals(DominionCard.CardType.ACTION))
+            {
+                if (gameState.getTurnState().getPhase().equals(DominionPlayer.Phase.ACTION))
+                {
+                    if (gameState.getTurnState().getActionsRemaining() > 0)
+                    {
+                        // if  it comes from your hand, is an action, and you have actions remaining, play the card
+                        connection.sendMessageObjectToServer(new CardMessage(card, action, username));
+                    }
+                }
+            }
+            if (card.getCardType().equals(DominionCard.CardType.TREASURE))
+            {
+
+            }
+
+        }
+        else if (source.equals("play")) {
+            // if its in the playing field don't do anything
+        }
+        else if (source.equals("buy"))
+        {
+            action = game_server.game.dominion.CardMessage.CardAction.GAIN;
+        }
+
         connection.sendMessageObjectToServer(new CardMessage());
     }
 }
