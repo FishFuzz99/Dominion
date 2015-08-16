@@ -1,3 +1,4 @@
+import game_server.game.blackjack.CardMessage;
 import game_server.game.dominion.DominionCard;
 import game_server.game.dominion.GameState;
 import game_server.game.dominion.Turn;
@@ -5,9 +6,7 @@ import game_server.message.ChatMessage;
 
 import javax.swing.*;
 import java.awt.Dimension;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,7 +18,6 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Map;
@@ -161,6 +159,9 @@ import java.util.List;
         playingField.setBorder(border1);
         playingField.add(playPane);
 
+        //DominionCard copper = new DominionCard("copper", 0, 0, 0, 0, 1, 0, DominionCard.CardType.TREASURE);
+        // the constructor of the DominionCard is private so I can't test this
+
         // pane to display the hand
         handPane = new JScrollPane();
 
@@ -221,39 +222,21 @@ import java.util.List;
         handPane.removeAll();
         for(int i = 0; i < hand.size(); i++)
         {
-            String path = "C:\\Users\\Andrew\\Documents\\cs3230_final_client\\";
-            ImageIcon image = new ImageIcon();
-            JLabel label = new JLabel();
-            JPanel card = new JPanel();
-
-            image = new ImageIcon(path + hand.get(i).getName());
-            label = new JLabel(image);
-            card.add(label);
-
-            handPane.add(card);
+            // add all teh cards in the hand to the pane
+            handPane.add(new CardPanel(hand.get(i), this));
         }
     }
 
-    void setPlayPane(List<DominionCard> hand)
+    void setPlayPane(List<DominionCard> playedCards)
     {
 
         playPane.removeAll();
-        for(int i = 0; i < hand.size(); i++)
+        for(int i = 0; i < playedCards.size(); i++)
         {
-
-            String path = "C:\\Users\\Andrew\\Documents\\cs3230_final_client\\";
-            ImageIcon image = new ImageIcon();
-            JLabel label = new JLabel();
-            JPanel card = new JPanel();
-
-            image = new ImageIcon(path + hand.get(i).getName());
-            label = new JLabel(image);
-            card.add(label);
-
-            playPane.add(card);
+            // add all of the cards to the pane
+            playPane.add(new CardPanel(playedCards.get(i), this));
         }
     }
-
 
 
 
@@ -267,5 +250,12 @@ import java.util.List;
     {
         this.gameState = gameState;
         displayGameState();
+    }
+
+    public void doCardEvents(DominionCard card)
+    {
+        game_server.game.dominion.CardMessage.CardAction action;
+        
+        connection.sendMessageObjectToServer(new CardMessage());
     }
 }
