@@ -2,11 +2,14 @@
  * Created by Andrew on 7/28/2015.
  */
 
+import game_server.game.GameType;
 import game_server.game.dominion.CardMessage;
 import game_server.game.dominion.DominionMessage;
 import game_server.game.dominion.GameStateMessage;
 import game_server.game.dominion.TurnMessage;
+import game_server.game.message.StatusMessage;
 import game_server.message.Message;
+import game_server.message.TimerMessage;
 
 import java.io.*;
 import java.net.Socket;
@@ -17,7 +20,7 @@ public class Connection implements Runnable {
     private ObjectOutputStream output;
     private DominionFrame frame;
     private Message incomingMessage;
-
+    public final static String username = "AndrewGray";
 
     public Connection(DominionFrame frame)
     {
@@ -43,19 +46,21 @@ public class Connection implements Runnable {
             //All messages except the initial username are sent using the writeObject and readObject methods of the ObjectOutputStream and ObjectInputStream classes.
             this.input = new ObjectInputStream(new BufferedInputStream(dominionConnection.getInputStream()));
 
+            boolean startReceived = false;
+            boolean timerReceived = false;
+
             while (dominionConnection.isConnected() && !(dominionConnection.isClosed()))
             {
                 try
                 {
                     incomingMessage = (Message) input.readObject();
-                    if (incomingMessage.getUsername().equals("Client"))
+                    if (incomingMessage.getMessageType().equals(Message.Type.ACKNOWLEDGE))
                     {
-                        if (incomingMessage.getMessageType().equals(Message.Type.ACKNOWLEDGE)) {
-                            // good to go
-
-                        } else if (incomingMessage.getMessageType().equals(Message.Type.DENY)) {
-                            // username already taken
-                        }
+                        frame.setOutput("Connected.");
+                    }
+                    else if (incomingMessage.getMessageType().equals(Message.Type.DENY))
+                    {
+                        frame.setOutput("Connection denied. Username already in use.");
                     }
                     else
                     {
@@ -71,13 +76,29 @@ public class Connection implements Runnable {
                                 {
 
                                 }
+                                //else if (incomingMessage instanceof StartMessage)
+                                //{
+                                //    startReceived = true;
+                                //}
                             }
                         }
+                    }
+                    if (startReceived && incomingMessage instanceof TimerMessage)
+                    {
+                        timerReceived = true;
+                    }
+                    if (startReceived && timerReceived && incomingMessage instanceof StatusMessage)
+                    {
+                        startReceived = false;
+                    }
+                    if (!startReceived && timerReceived && incomingMessage instanceof TimerMessage)
+                    {
+                        // game is starting
                     }
                 }
                 catch(Exception e)
                 {
-
+                    e.printStackTrace();
                 }
             }
         }
@@ -126,7 +147,8 @@ public class Connection implements Runnable {
 
     public void sendStartGameMessage()
     {
-
+        sendMessageObjectToServer(StatusMessage.getStartMessage(GameType.DOMINION, username));
+        // well StatusMessage is still not visible in the .jar but apparently if I hard code it in it works?
     }
 
 

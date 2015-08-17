@@ -65,7 +65,9 @@ import java.util.List;
         chat.setPreferredSize(new Dimension(275, 10));
         chat.setBorder(border1);
         chat.setBackground(Color.lightGray);
-        //chat.;
+        chat.setWrapStyleWord(true);
+        chat.setLineWrap(true);
+        chat.setEditable(false);
 
         JScrollPane chatScrollPane = new JScrollPane(chat);
         chatScrollPane.setPreferredSize(new Dimension(300, 375));
@@ -121,6 +123,7 @@ import java.util.List;
         startGameBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                connection.sendStartGameMessage();
             }
         });
 
@@ -266,15 +269,14 @@ import java.util.List;
                     if (gameState.getTurnState().getActionsRemaining() > 0)
                     {
                         // if  it comes from your hand, is an action, and you have actions remaining, play the card
-                        connection.sendMessageObjectToServer(new CardMessage(card, action, username));
+                        //connection.sendMessageObjectToServer(new CardMessage(card, action, username));
                     }
                 }
             }
-            if (card.getCardType().equals(DominionCard.CardType.TREASURE))
-            {
-
+            if (card.getCardType().equals(DominionCard.CardType.TREASURE)) {
+                // if it comes from your hand and is a treasure card, play the card
+                //connection.sendMessageObjectToServer(new CardMessage(card, action, username));
             }
-
         }
         else if (source.equals("play")) {
             // if its in the playing field don't do anything
@@ -282,8 +284,11 @@ import java.util.List;
         else if (source.equals("buy"))
         {
             action = game_server.game.dominion.CardMessage.CardAction.GAIN;
+            if (card.getCost() > gameState.getTurnState().getGoldRemaining() || gameState.getTurnState().getBuysRemaining() < 1)
+            {
+                //if they have the money and the buys, buy the card
+                //connection.sendMessageObjectToServer(new CardMessage(card, action, username));
+            }
         }
-
-        connection.sendMessageObjectToServer(new CardMessage());
     }
 }
