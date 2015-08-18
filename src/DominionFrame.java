@@ -221,6 +221,21 @@ import java.util.List;
         }
     }
 
+    void setOutputSansUsername(String text)
+    {
+        if (text.equals(""))
+        {
+
+        }
+        else
+        {
+            chat.append(text + "\n");
+            chat.setPreferredSize(new Dimension(275, chat.getHeight() + 10));
+            chat.setCaretPosition(chat.getDocument().getLength());
+            chatInput.requestFocus();
+        }
+    }
+
     void setHandPane(List<DominionCard> hand)
     {
         handPane.removeAll();
