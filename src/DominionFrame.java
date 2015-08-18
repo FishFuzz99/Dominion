@@ -257,12 +257,45 @@ import java.util.List;
         }
     }
 
+    void setDiscard(DominionCard lastDiscard)
+    {
 
+    }
+
+    void setDeck(boolean isDeckEmpty)
+    {
+
+    }
+
+    void setBuyStack(Map<DominionCard, Integer> buyStack)
+    {
+
+    }
+
+    void setPhase(DominionPlayer.Phase phase)
+    {
+
+    }
+
+    void setTurnNumbers(int buys, int actions, int gold)
+    {
+
+    }
+
+    void setTurnState(Turn turnState)
+    {
+        setPhase(turnState.getPhase());
+        setTurnNumbers(turnState.getBuysRemaining(), turnState.getActionsRemaining(), turnState.getGoldRemaining());
+    }
 
     public void displayGameState()
     {
         setHandPane(gameState.getHand());
         setPlayPane(gameState.getPlayedCards());
+        setDiscard(gameState.getLastDiscard());
+        setDeck(gameState.isDeckEmpty());
+        setBuyStack(gameState.getBuyStack());
+        setTurnState(gameState.getTurnState());
     }
 
     public void setGameState(GameState gameState)

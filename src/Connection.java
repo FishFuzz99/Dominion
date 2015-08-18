@@ -8,6 +8,7 @@ import game_server.game.dominion.DominionMessage;
 import game_server.game.dominion.GameStateMessage;
 import game_server.game.dominion.TurnMessage;
 import game_server.game.message.StatusMessage;
+import game_server.message.ChatMessage;
 import game_server.message.Message;
 import game_server.message.TimerMessage;
 
@@ -72,7 +73,8 @@ public class Connection implements Runnable {
                     }
                     else if (incomingMessage.getMessageType().equals(Message.Type.TIMER) && connected && startAck)
                     {
-                        frame.setOutputSansUsername("Game will begin shortly.");
+                        frame.setOutputSansUsername("Game will begin in " + ((TimerMessage) incomingMessage).getSeconds() + " seconds.");
+                        //incomingMessage.getSeconds();
                     }
                     else if (incomingMessage.getMessageType().equals(Message.Type.START_GAME) && connected && startAck)
                     {
@@ -86,21 +88,37 @@ public class Connection implements Runnable {
                     // < start game
                     // < timer
                     // < game
+                    else if (incomingMessage.getMessageType().equals(Message.Type.CHAT))
+                    {
+                        frame.setOutput(incomingMessage.getUsername() + ": " + ((ChatMessage) incomingMessage).getText());
+                    }
                     else
                     {
                         if (incomingMessage.getMessageType().equals(Message.Type.GAME))
                         {
                             if (incomingMessage instanceof DominionMessage)
                             {
-                                if (incomingMessage.getUsername().equals(null)) // if it has a null username it is for this player
+                                if (incomingMessage.getUsername() == null) // if it has a null username it is for this player
                                 {
                                     if (((DominionMessage) incomingMessage).getType().equals(DominionMessage.DominionType.START_TURN))
                                     {
-                                        int i = 0;
+                                        frame.setOutputSansUsername("It is now your turn");
+                                    }
+                                    else if (((DominionMessage) incomingMessage).getType().equals(DominionMessage.DominionType.GAME_STATE))
+                                    {
+                                        frame.setGameState(((GameStateMessage) incomingMessage).getGameState());
                                     }
                                 }
+                                else
                                 {
-                                     frame.setGameState(((GameStateMessage) incomingMessage).getGameState());
+                                    if (((DominionMessage) incomingMessage).getType().equals(DominionMessage.DominionType.START_TURN))
+                                    {
+                                        frame.setOutputSansUsername("It is now " + incomingMessage.getUsername() + "'s turn.");
+                                    }
+                                    else if (((DominionMessage) incomingMessage).getType().equals(DominionMessage.DominionType.GAME_STATE))
+                                    {
+                                        frame.setGameState(((GameStateMessage) incomingMessage).getGameState());
+                                    }
                                 }
                             }
                         }
