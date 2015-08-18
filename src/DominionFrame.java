@@ -1,8 +1,5 @@
 import game_server.game.blackjack.CardMessage;
-import game_server.game.dominion.DominionCard;
-import game_server.game.dominion.DominionPlayer;
-import game_server.game.dominion.GameState;
-import game_server.game.dominion.Turn;
+import game_server.game.dominion.*;
 import game_server.message.ChatMessage;
 
 import javax.swing.*;
@@ -44,11 +41,15 @@ import java.util.List;
     private JTextArea chat;
     private JTextArea chatInput;
     private GameState gameState;
+    private JTextField remainingBuys;
+    private JTextField remainingActions;
+    private JTextField remainingGold;
+    private JTextField phase;
     //private Connection connection;
 
     DominionFrame()
     {
-        startFrame();//gtesting
+        //gtesting
         //GameState gameState = new GameState();
 
         ArrayList<DominionCard> hand = new ArrayList<DominionCard>(); // This should be cards
@@ -127,6 +128,20 @@ import java.util.List;
             }
         });
 
+        endTurnBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                connection.sendMessageObjectToServer(TurnMessage.getEndTurn());
+            }
+        });
+
+        connectBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startFrame();
+            }
+        });
+
 
 
         // panel to hold the buttons
@@ -141,6 +156,29 @@ import java.util.List;
         buttons.add(startGameBtn);
         buttons.add(connectBtn);
 
+        remainingBuys = new JTextField("Buys");
+        remainingActions = new JTextField("Actions");
+        remainingGold = new JTextField("Gold");
+        phase = new JTextField("Phase");
+
+        remainingBuys.setEditable(false);
+        remainingActions.setEditable(false);
+        remainingGold.setEditable(false);
+        phase.setEditable(false);
+
+
+
+
+        JPanel remainingPanel = new JPanel(new BorderLayout());
+        remainingPanel.add(remainingActions, BorderLayout.NORTH);
+        remainingPanel.add(remainingBuys, BorderLayout.CENTER);
+        remainingPanel.add(remainingGold, BorderLayout.SOUTH);
+
+        JPanel turnPanel = new JPanel(new BorderLayout());
+        turnPanel.setPreferredSize(new Dimension(100, 100));
+        turnPanel.add(remainingPanel, BorderLayout.NORTH);
+        turnPanel.add(phase, BorderLayout.SOUTH);
+
 
         // area that holds the phase info, actions buys money, buttons, chat
         JPanel turnArea = new JPanel(new BorderLayout());
@@ -148,15 +186,19 @@ import java.util.List;
         turnArea.setBorder(border1);
 
         turnArea.add(chatPanel, BorderLayout.NORTH);
+        turnArea.add(turnPanel, BorderLayout.CENTER);
         turnArea.add(buttons, BorderLayout.SOUTH);
 
+
+
         // area that holds the cards that can be purchased
-        JPanel buyArea = new JPanel(new GridBagLayout());
+        JPanel buyArea = new JPanel(new BorderLayout());
         buyArea.setPreferredSize(new Dimension(1620, 480));
         buyArea.setBorder(border1);
 
         // pane to display the played cards
         playPane = new JScrollPane();
+        playPane.setPreferredSize(new Dimension(1400, 300));
 
         JPanel playingField = new JPanel(new GridBagLayout());
         playingField.setPreferredSize(new Dimension(1620, 300));
@@ -168,6 +210,7 @@ import java.util.List;
 
         // pane to display the hand
         handPane = new JScrollPane();
+        handPane.setPreferredSize(new Dimension(1400, 300));
 
         // holds the hand
         JPanel handArea = new JPanel();
@@ -242,7 +285,21 @@ import java.util.List;
         for(int i = 0; i < hand.size(); i++)
         {
             // add all teh cards in the hand to the pane
-            handPane.add(new CardPanel(hand.get(i), this, "hand"));
+            //handPane.add(new CardPanel(hand.get(i), this, "hand"));
+            JPanel panel = new JPanel();
+            panel.setPreferredSize(new Dimension(100,300));
+
+            String path = "C:\\Users\\Andrew\\Documents\\cs3230_final_client\\";
+            path += hand.get(i).getName() + ".jpg";
+
+            ImageIcon image = new ImageIcon(path);
+            JLabel label = new JLabel();
+            label.setBounds(0, 0, 100, 300);
+            label.setIcon(image);
+
+            panel.add(label, BorderLayout.CENTER);
+
+            handPane.add(panel);
         }
     }
 
@@ -253,7 +310,20 @@ import java.util.List;
         for(int i = 0; i < playedCards.size(); i++)
         {
             // add all of the cards to the pane
-            playPane.add(new CardPanel(playedCards.get(i), this, "play"));
+            JPanel panel = new JPanel();
+            panel.setPreferredSize(new Dimension(100,300));
+
+            String path = "C:\\Users\\Andrew\\Documents\\cs3230_final_client\\";
+            path += playedCards.get(i).getName() + ".jpg";
+
+            ImageIcon image = new ImageIcon(path);
+            JLabel label = new JLabel();
+            label.setBounds(0, 0, 100, 300);
+            label.setIcon(image);
+
+            panel.add(label, BorderLayout.CENTER);
+
+            playPane.add(panel);
         }
     }
 
@@ -274,12 +344,14 @@ import java.util.List;
 
     void setPhase(DominionPlayer.Phase phase)
     {
-
+        this.phase.setText("Phase: " + phase.toString());
     }
 
     void setTurnNumbers(int buys, int actions, int gold)
     {
-
+        remainingActions.setText("Actions: " + Integer.toString(actions));
+        remainingBuys.setText("Buys:     " + Integer.toString(buys));
+        remainingGold.setText("Gold:     " + Integer.toString(gold));
     }
 
     void setTurnState(Turn turnState)

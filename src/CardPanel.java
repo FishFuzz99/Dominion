@@ -1,8 +1,11 @@
 import game_server.game.dominion.DominionCard;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.Dimension;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -35,23 +38,39 @@ public class CardPanel extends JPanel
    //    // using the cards id or something, make a frame for it
    //}
 
-    String source;
-    DominionFrame frame;
-    DominionCard card;
+    private String source;
+    private DominionFrame frame;
+    private DominionCard card;
+    //private BufferedImage image;
+
+
 
     CardPanel(DominionCard card, DominionFrame frame, String source)
     {
-        this.card = card;
-        String path = "C:\\Users\\Andrew\\Documents\\cs3230_final_client\\";
-        ImageIcon image = new ImageIcon();
-        JLabel label = new JLabel();
-        JPanel cardPanel = new JPanel();
         this.frame = frame;
         this.source = source;
+        this.card = card;
+        String path = "C:\\Users\\Andrew\\Documents\\cs3230_final_client\\";
+        path += card.getName() + ".jpg";
 
-        image = new ImageIcon(path + card.getName());
-        label = new JLabel(image);
-        cardPanel.add(label);
+
+
+        setLayout(new BorderLayout());
+
+        ImageIcon image = new ImageIcon(path);
+        JLabel label = new JLabel();
+        label.setBounds(0, 0, 100, 300);
+        label.setIcon(image);
+
+        add(label, BorderLayout.CENTER);
+
+        //ImageIcon image = new ImageIcon("C:\\Users\\Andrew\\Documents\\cs3230_final_client\\Copper.jpg");
+        //JLabel label = new JLabel();
+        //label.setBounds(0,0,100,300);
+        //label.setIcon(image);
+//
+        //buyArea.add(label, BorderLayout.CENTER);
+
     }
 
     public void mouseClicked(MouseEvent e)
@@ -63,10 +82,11 @@ public class CardPanel extends JPanel
         }
     }
 
-    @Override
-    public void paintComponent(Graphics g)
-    {
-
-    }
+    //@Override
+    //public void paintComponent(Graphics g)
+    //{
+    //    super.paintComponent(g);
+    //    g.drawImage(image, 0, 0, null);
+    //}
 
 }

@@ -21,7 +21,7 @@ public class Connection implements Runnable {
     private ObjectOutputStream output;
     private DominionFrame frame;
     private Message incomingMessage;
-    public final static String username = "AndrewGray";
+    public final static String username = "Andrew Gray";
     boolean startSent = false;
 
     public Connection(DominionFrame frame)
