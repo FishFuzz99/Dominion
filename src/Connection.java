@@ -23,6 +23,8 @@ public class Connection implements Runnable {
     private Message incomingMessage;
     public final static String username = "Andrew Gray";
     boolean startSent = false;
+    boolean connected = false;
+
 
     public Connection(DominionFrame frame)
     {
@@ -50,8 +52,6 @@ public class Connection implements Runnable {
 
             boolean startAck = false;
             boolean startReceived = false;
-            boolean timerReceived = false;
-            boolean connected = false;
 
             while (dominionConnection.isConnected() && !(dominionConnection.isClosed()))
             {
@@ -88,9 +88,9 @@ public class Connection implements Runnable {
                     // < start game
                     // < timer
                     // < game
-                    else if (incomingMessage.getMessageType().equals(Message.Type.CHAT))
+                    else if (incomingMessage.getMessageType().equals(Message.Type.CHAT) && incomingMessage.getUsername() != null)
                     {
-                        frame.setOutput(incomingMessage.getUsername() + ": " + ((ChatMessage) incomingMessage).getText());
+                        frame.setOutput(((ChatMessage) incomingMessage).getText(), incomingMessage.getUsername(), false);
                     }
                     else
                     {
@@ -127,12 +127,14 @@ public class Connection implements Runnable {
                 catch(Exception e)
                 {
                     e.printStackTrace();
+                    frame.setOutputSansUsername("Something went wrong with the incoming message.");
                 }
             }
         }
         catch(Exception e)
         {
             e.printStackTrace();
+            frame.setOutputSansUsername("Something went wrong with the Run thread.");
         }
     }
     public void terminate()
@@ -157,6 +159,7 @@ public class Connection implements Runnable {
         catch (IOException e)
         {
             e.printStackTrace();
+            frame.setOutputSansUsername("Error sending UTF to server for connection");
         }
     }
 
@@ -170,17 +173,21 @@ public class Connection implements Runnable {
         catch (IOException e)
         {
             e.printStackTrace();
+            frame.setOutputSansUsername("Error sending message object to server");
         }
     }
 
     public void sendStartGameMessage()
     {
-        sendMessageObjectToServer(StatusMessage.getStartMessage(GameType.DOMINION, username));
-        startSent = true;
-        frame.setOutputSansUsername("Starting game...");
-        // well StatusMessage is still not visible in the .jar but apparently if I hard code it in it works?
+        if (connected) {
+            sendMessageObjectToServer(StatusMessage.getStartMessage(GameType.DOMINION, username));
+            startSent = true;
+            frame.setOutputSansUsername("Starting game...");
+            // well StatusMessage is still not visible in the .jar but apparently if I hard code it in it works?
+        }
+        else
+        {
+            frame.setOutputSansUsername("Not connected.");
+        }
     }
-
-
-
 }

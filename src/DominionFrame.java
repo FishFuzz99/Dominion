@@ -90,7 +90,7 @@ import java.util.List;
         sendChatButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                setOutput(chatInput.getText());
+                setOutput(chatInput.getText(), username, true);
             }
         });
 
@@ -129,6 +129,7 @@ import java.util.List;
         startGameBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 connection.sendStartGameMessage();
             }
         });
@@ -146,7 +147,7 @@ import java.util.List;
                 startFrame();
             }
         });
-        
+
         buyCardBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -222,7 +223,7 @@ import java.util.List;
         copperCard.add(label, BorderLayout.CENTER);
         label.setIcon(image);
         JPanel copperPanel = new JPanel(new BorderLayout());
-        copperPanel.setPreferredSize(new Dimension(300, 325));
+        copperPanel.setPreferredSize(new Dimension(300, 520));
         copperPanel.setBorder(border1);
         copperPanel.add(copperCard, BorderLayout.NORTH);
         copperPanel.add(copperField, BorderLayout.SOUTH);
@@ -281,7 +282,7 @@ import java.util.List;
         villageCard.add(label, BorderLayout.CENTER);
         label.setIcon(image);
         JPanel villagePanel = new JPanel(new BorderLayout());
-        villagePanel.setPreferredSize(new Dimension(300, 325));
+        villagePanel.setPreferredSize(new Dimension(300, 520));
         villagePanel.setBorder(border1);
         villagePanel.add(villageCard, BorderLayout.NORTH);
         villagePanel.add(villageField, BorderLayout.SOUTH);
@@ -306,18 +307,18 @@ import java.util.List;
         estateCard.add(label, BorderLayout.CENTER);
         label.setIcon(image);
         JPanel estatePanel = new JPanel(new BorderLayout());
-        estatePanel.setPreferredSize(new Dimension(300, 325));
+        estatePanel.setPreferredSize(new Dimension(300, 520));
         estatePanel.setBorder(border1);
         estatePanel.add(estateCard, BorderLayout.NORTH);
         estatePanel.add(estateField, BorderLayout.SOUTH);
 
         // area that holds the cards that can be purchased
-        JPanel buyArea = new JPanel(new BorderLayout());
+        JPanel buyArea = new JPanel(new FlowLayout());
         buyArea.setPreferredSize(new Dimension(1620, 520));
         buyArea.setBorder(border1);
-        buyArea.add(copperPanel, BorderLayout.WEST);
-        buyArea.add(villagePanel, BorderLayout.CENTER);
-        buyArea.add(estatePanel, BorderLayout.EAST);
+        buyArea.add(copperPanel);
+        buyArea.add(villagePanel);
+        buyArea.add(estatePanel);
 
         // pane to display the played cards
         playPane = new JScrollPane();
@@ -376,15 +377,17 @@ import java.util.List;
 
 
     }
-    void setOutput(String text)
+    void setOutput(String text, String userName, boolean send)
     {
         if (text.equals(""))
         {
             // if there is no text, don't do anything
         }
         else {
-            connection.sendMessageObjectToServer(new ChatMessage(text, username));
-            chat.append(username + ": " + text + "\n");
+            if (send){
+                connection.sendMessageObjectToServer(new ChatMessage(text, username));
+            }
+            chat.append(userName + ": " + text + "\n");
             chat.setPreferredSize(new Dimension(275, chat.getHeight() + 10));
             chat.setCaretPosition(chat.getDocument().getLength());
             chatInput.setText("");
@@ -418,8 +421,8 @@ import java.util.List;
             JPanel panel = new JPanel();
             panel.setPreferredSize(new Dimension(300,475));
 
-            String path = "C:\\Users\\Andrew\\Documents\\cs3230_final_client\\";
-            path += hand.get(i).getName() + ".jpg";
+
+            String path = hand.get(i).getName() + ".jpg";
 
             ImageIcon image = new ImageIcon(path);
             JLabel label = new JLabel();
@@ -429,7 +432,10 @@ import java.util.List;
             panel.add(label, BorderLayout.CENTER);
 
             handPanel.add(panel);
+
         }
+        handPanel.repaint();
+        handPanel.revalidate();
     }
 
     void setPlayPane(List<DominionCard> playedCards)
