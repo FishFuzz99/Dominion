@@ -5,6 +5,7 @@ import game_server.message.ChatMessage;
 import javax.swing.*;
 import java.awt.Dimension;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -18,6 +19,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 import java.util.List;
 
@@ -37,14 +39,17 @@ import java.util.List;
     }
 
     private JScrollPane playPane;
-    private JScrollPane handPane;
     private JTextArea chat;
+    private JPanel handPanel;
     private JTextArea chatInput;
     private GameState gameState;
     private JTextField remainingBuys;
     private JTextField remainingActions;
     private JTextField remainingGold;
     private JTextField phase;
+    private JTextField estateField;
+    private JTextField villageField;
+    private JTextField copperField;
     //private Connection connection;
 
     DominionFrame()
@@ -190,11 +195,88 @@ import java.util.List;
         turnArea.add(buttons, BorderLayout.SOUTH);
 
 
+        JPanel copperCard = new JPanel();
+        copperCard.setPreferredSize(new Dimension(300, 475));
+
+        copperField = new JTextField("Remaining: ");
+        copperField.setEditable(false);
+        copperField.setPreferredSize(new Dimension(300, 45));
+
+        String path = "Copper.jpg";
+        //path += hand.get(i).getName() + ".jpg";
+        ImageIcon image = new ImageIcon(path);
+        //Image img = image.getImage();
+        //BufferedImage bi = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+       // Graphics g = bi.createGraphics();
+        //g.drawImage(img, 0, 0, WIDTH, HEIGHT, null);
+        //image = new ImageIcon(bi);
+
+        JLabel label = new JLabel();
+        copperCard.add(label, BorderLayout.CENTER);
+        label.setIcon(image);
+        JPanel copperPanel = new JPanel(new BorderLayout());
+        copperPanel.setPreferredSize(new Dimension(300, 325));
+        copperPanel.setBorder(border1);
+        copperPanel.add(copperCard, BorderLayout.NORTH);
+        copperPanel.add(copperField, BorderLayout.SOUTH);
+
+        JPanel villageCard = new JPanel();
+        villageCard.setPreferredSize(new Dimension(300, 475));
+
+        villageField = new JTextField("Remaining: ");
+        villageField.setEditable(false);
+        villageField.setPreferredSize(new Dimension(300, 45));
+
+        path = "Village.jpg";
+        //path += hand.get(i).getName() + ".jpg";
+        image = new ImageIcon(path);
+        //Image img = image.getImage();
+        //BufferedImage bi = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        // Graphics g = bi.createGraphics();
+        //g.drawImage(img, 0, 0, WIDTH, HEIGHT, null);
+        //image = new ImageIcon(bi);
+
+        label = new JLabel();
+        villageCard.add(label, BorderLayout.CENTER);
+        label.setIcon(image);
+        JPanel villagePanel = new JPanel(new BorderLayout());
+        villagePanel.setPreferredSize(new Dimension(300, 325));
+        villagePanel.setBorder(border1);
+        villagePanel.add(villageCard, BorderLayout.NORTH);
+        villagePanel.add(villageField, BorderLayout.SOUTH);
+
+        JPanel estateCard = new JPanel();
+        villageCard.setPreferredSize(new Dimension(300, 475));
+
+        estateField = new JTextField("Remaining: ");
+        estateField.setEditable(false);
+        estateField.setPreferredSize(new Dimension(300, 45));
+
+        path = "Estate.jpg";
+        //path += hand.get(i).getName() + ".jpg";
+        image = new ImageIcon(path);
+        //Image img = image.getImage();
+        //BufferedImage bi = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        // Graphics g = bi.createGraphics();
+        //g.drawImage(img, 0, 0, WIDTH, HEIGHT, null);
+        //image = new ImageIcon(bi);
+
+        label = new JLabel();
+        estateCard.add(label, BorderLayout.CENTER);
+        label.setIcon(image);
+        JPanel estatePanel = new JPanel(new BorderLayout());
+        estatePanel.setPreferredSize(new Dimension(300, 325));
+        estatePanel.setBorder(border1);
+        estatePanel.add(estateCard, BorderLayout.NORTH);
+        estatePanel.add(estateField, BorderLayout.SOUTH);
 
         // area that holds the cards that can be purchased
         JPanel buyArea = new JPanel(new BorderLayout());
-        buyArea.setPreferredSize(new Dimension(1620, 480));
+        buyArea.setPreferredSize(new Dimension(1620, 520));
         buyArea.setBorder(border1);
+        buyArea.add(copperPanel, BorderLayout.WEST);
+        buyArea.add(villagePanel, BorderLayout.CENTER);
+        buyArea.add(estatePanel, BorderLayout.EAST);
 
         // pane to display the played cards
         playPane = new JScrollPane();
@@ -208,15 +290,20 @@ import java.util.List;
         //DominionCard copper = new DominionCard("copper", 0, 0, 0, 0, 1, 0, DominionCard.CardType.TREASURE);
         // the constructor of the DominionCard is private so I can't test this
 
+
+
+
         // pane to display the hand
-        handPane = new JScrollPane();
-        handPane.setPreferredSize(new Dimension(1400, 300));
+
+        handPanel = new JPanel();
+        handPanel.setPreferredSize(new Dimension(1620, 300));
+
 
         // holds the hand
-        JPanel handArea = new JPanel();
+        JPanel handArea = new JPanel(new BorderLayout());
         playingField.setPreferredSize(new Dimension(1620, 300));
         playingField.setBorder(border1);
-        handArea.add(handPane);
+        handArea.add(handPanel);
 
         // area that holds the hand area, played cards area, buy area
         JPanel playArea = new JPanel(new BorderLayout());
@@ -281,7 +368,8 @@ import java.util.List;
 
     void setHandPane(List<DominionCard> hand)
     {
-        handPane.removeAll();
+        handPanel.removeAll();
+        handPanel.setLayout(new GridLayout(1, hand.size()));
         for(int i = 0; i < hand.size(); i++)
         {
             // add all teh cards in the hand to the pane
@@ -299,7 +387,7 @@ import java.util.List;
 
             panel.add(label, BorderLayout.CENTER);
 
-            handPane.add(panel);
+            handPanel.add(panel);
         }
     }
 
@@ -339,7 +427,7 @@ import java.util.List;
 
     void setBuyStack(Map<DominionCard, Integer> buyStack)
     {
-
+        // update the cardFields
     }
 
     void setPhase(DominionPlayer.Phase phase)
