@@ -146,6 +146,13 @@ import java.util.List;
                 startFrame();
             }
         });
+        
+        buyCardBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setOutputSansUsername("This button does not do anything. Double click on a card to attempt to buy it.");
+            }
+        });
 
 
 
@@ -220,6 +227,40 @@ import java.util.List;
         copperPanel.add(copperCard, BorderLayout.NORTH);
         copperPanel.add(copperField, BorderLayout.SOUTH);
 
+        copperCard.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() > 1)
+                {
+                    if (gameState.getTurnState().getBuysRemaining() > 0)
+                    {
+                        connection.sendMessageObjectToServer(new game_server.game.dominion.CardMessage(DominionCard.getCard("Copper"), game_server.game.dominion.CardMessage.CardAction.GAIN, username));
+                    }
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+
+
         JPanel villageCard = new JPanel();
         villageCard.setPreferredSize(new Dimension(300, 475));
 
@@ -280,10 +321,10 @@ import java.util.List;
 
         // pane to display the played cards
         playPane = new JScrollPane();
-        playPane.setPreferredSize(new Dimension(1400, 300));
+        playPane.setPreferredSize(new Dimension(1400, 100));
 
         JPanel playingField = new JPanel(new GridBagLayout());
-        playingField.setPreferredSize(new Dimension(1620, 300));
+        playingField.setPreferredSize(new Dimension(1620, 100));
         playingField.setBorder(border1);
         playingField.add(playPane);
 
@@ -296,14 +337,14 @@ import java.util.List;
         // pane to display the hand
 
         handPanel = new JPanel();
-        handPanel.setPreferredSize(new Dimension(1620, 300));
+        handPanel.setPreferredSize(new Dimension(1620, 475));
 
 
         // holds the hand
         JPanel handArea = new JPanel(new BorderLayout());
-        playingField.setPreferredSize(new Dimension(1620, 300));
+        playingField.setPreferredSize(new Dimension(1620, 475));
         playingField.setBorder(border1);
-        handArea.add(handPanel);
+        handArea.add(handPanel, BorderLayout.CENTER);
 
         // area that holds the hand area, played cards area, buy area
         JPanel playArea = new JPanel(new BorderLayout());
@@ -369,13 +410,13 @@ import java.util.List;
     void setHandPane(List<DominionCard> hand)
     {
         handPanel.removeAll();
-        handPanel.setLayout(new GridLayout(1, hand.size()));
+        handPanel.setLayout(new FlowLayout());
         for(int i = 0; i < hand.size(); i++)
         {
             // add all teh cards in the hand to the pane
             //handPane.add(new CardPanel(hand.get(i), this, "hand"));
             JPanel panel = new JPanel();
-            panel.setPreferredSize(new Dimension(100,300));
+            panel.setPreferredSize(new Dimension(300,475));
 
             String path = "C:\\Users\\Andrew\\Documents\\cs3230_final_client\\";
             path += hand.get(i).getName() + ".jpg";
